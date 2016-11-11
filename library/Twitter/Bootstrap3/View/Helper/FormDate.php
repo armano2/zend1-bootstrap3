@@ -34,6 +34,17 @@ class Twitter_Bootstrap3_View_Helper_FormDate extends Twitter_Bootstrap3_View_He
      */
     public function formDate($name, $value = null, $attribs = null)
     {
-        return $this->_formText('date', $name, $value, $attribs);
+        $js = sprintf('$("#%s").datetimepicker(%s);', $attribs['id'], Zend_Json::encode([
+            'locale' => 'pl',
+            'format' => array_key_exists('format', $attribs) ? $attribs['format'] : 'YYYY-MM-DD'
+        ]));
+
+        if ($this->view instanceof Zend_View) {
+            $this->view->headLink()->appendStylesheet('/public/assets/datetimepicker/css/bootstrap-datetimepicker.min.css');
+            $this->view->headScript()->appendFile('/public/assets/moment/moment-with-locales.min.js');
+            $this->view->headScript()->appendFile('/public/assets/datetimepicker/js/bootstrap-datetimepicker.min.js');
+        }
+
+        return $this->_formText('text', $name, $value, $attribs) . '<script type="text/javascript">$(function() {' . $js . '})</script>';
     }
 }
